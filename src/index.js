@@ -1,8 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import { BrowserRouter,Switch, Route } from 'react-router-dom'
+
+import Home from '@/views/Home'
+import UnauthorizedLayout from '@/layouts/UnauthorizedLayout'
+
+import '@/styles/index.less';
 import * as serviceWorker from './serviceWorker';
+
+
+const App = () => (
+  <BrowserRouter>
+    <Switch>
+      <Route path="/login" component={UnauthorizedLayout} />
+      <Route path="/" component={Home} />
+      <Route path="/:user" component={Home} />
+      <Route component={Home} />
+    </Switch>
+  </BrowserRouter>
+)
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
