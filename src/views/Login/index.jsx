@@ -1,7 +1,16 @@
+/*
+ * @Author: sherry.zhai 
+ * @Date: 2019-02-18 15:56:42 
+ * @Last Modified by: sherry.zhai
+ * @Last Modified time: 2019-02-20 17:14:04
+ */
 import React, { Component } from "react";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import qs from 'qs'
 import { Form, Icon, Input, Button, Checkbox } from "antd";
-
-import FormField from  '@/components/FormField'
+import FormField from "@/components/FormField";
+import {login} from '@/redux/app/user'
 
 import "./index.less";
 
@@ -10,14 +19,21 @@ class LoginForm extends Component {
     super(props, context);
   }
 
+  static propType = {
+    login: PropTypes.func.isRequired
+  }
+
+  componentDidMount() {
+
+  }
+
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      if(err) return;
-      if (!err) {
-        this.props.history.push('/');
-        console.log("Received values of form: ", values);
-      }
+      if (err) return;
+      this.props.login(values).then(res => {
+        console.log(33, res)
+      })
     });
   };
 
@@ -25,33 +41,28 @@ class LoginForm extends Component {
     const { getFieldDecorator } = this.props.form;
     const formData = [
       {
-        id: 'username',
-        type: 'input',
+        id: "username",
+        type: "input",
         options: {
-          rules: [
-            { required: true, message: "Please input your username!" }
-          ],
+          rules: [{ required: true, message: "Please input your username!" }]
         },
         props: {
           prefix: <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />,
-          placeholder: 'Username'
+          placeholder: "Username"
         }
       },
       {
-        id: 'password',
-        type: 'input',
+        id: "password",
+        type: "input",
         options: {
-          rules: [
-            { required: true, message: "Please input your Password!" }
-          ],
+          rules: [{ required: true, message: "Please input your Password!" }]
         },
         props: {
           prefix: <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />,
-          placeholder: 'Username',
-          type:"password"
+          placeholder: "Username",
+          type: "password"
         }
       }
-
     ];
 
     return (
@@ -60,9 +71,9 @@ class LoginForm extends Component {
           <Form onSubmit={this.handleSubmit} className="login-form">
             {formData.map(field => (
               <FormField
-                key ={field.id} 
-                field = {field}
-                getFieldDecorator = {getFieldDecorator}
+                key={field.id}
+                field={field}
+                getFieldDecorator={getFieldDecorator}
               />
             ))}
 
@@ -90,6 +101,17 @@ class LoginForm extends Component {
   }
 }
 
-const Login = Form.create({})(LoginForm);
+const mapStateToProps = ({ user }) => {
+  return {
+    userState: user
+  }
+}
+
+const Login = connect(
+  mapStateToProps,
+  {
+    login,
+  }
+)(Form.create({})(LoginForm));
 
 export default Login;
